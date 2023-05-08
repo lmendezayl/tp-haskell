@@ -60,24 +60,30 @@ estaEnLista y ((_,nombre):xs) = y == nombre || estaEnLista y xs
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe red u  = sumarUsuariosDistintos u (relaciones red)  
 
+--La funcion sumarUsuariosDistintos concatena los usuarios que no esten repetidos.
 sumarUsuariosDistintos :: Usuario -> [Relacion] -> [Usuario]
 sumarUsuariosDistintos u [] = []
-sumarUsuariosDistintos u ((u1,u2):xs) | u == u1 && estaUsuarioEnLista u xs = [u2] ++ sumarUsuariosDistintos u xs
-                                      | u == u2 && estaUsuarioEnLista u xs= [u1] ++ sumarUsuariosDistintos u xs
+sumarUsuariosDistintos u ((u1,u2):xs) | u == u1 && not(estaRepetidaRel (u1, u2) xs) = [u2] ++ sumarUsuariosDistintos u xs
+                                      | u == u2 && not(estaRepetidaRel (u1, u2) xs) = [u1] ++ sumarUsuariosDistintos u xs
                                       | otherwise = sumarUsuariosDistintos u xs
 
 
-estaUsuarioEnLista :: Usuario -> [Relacion] -> Bool
-estaUsuarioEnLista _ [] = False
-estaUsuarioEnLista u ((u1,u2):xs) | u == u1 || u == u2 = True
-                                  | otherwise = estaUsuarioEnLista u xs
+estaRepetidaRel :: Relacion -> [Relacion] -> Bool
+estaRepetidaRel _ [] = False
+estaRepetidaRel (u1, u2) ((u3, u4) : xs) | u1 == u3 && u2 == u4 = True
+                                         | u1 == u4 && u2 == u3 = True
+                                         | otherwise = False
 
 
-
-
--- describir qué hace la función: .....
+--3
+-- La funcion cantidadDeAmigos devuelve la longitud de la lista amigosDe
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
-cantidadDeAmigos = undefined
+cantidadDeAmigos red u = longitud (amigosDe red u)
+
+-- Funcion auxiliar "longitud" devuelve la longitud de la lista asociada
+longitud :: [Usuario] -> Int
+longitud [] = 0
+longitud (x:xs) = 1 + longitud xs
 
 -- describir qué hace la función: .....
 usuarioConMasAmigos :: RedSocial -> Usuario
