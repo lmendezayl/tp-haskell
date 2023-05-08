@@ -78,7 +78,7 @@ estaRepetidaRel (u1, u2) ((u3, u4) : xs) | u1 == u3 && u2 == u4 = True
 --3
 -- La funcion cantidadDeAmigos devuelve la longitud de la lista amigosDe
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
-cantidadDeAmigos red u = longitud (amigosDe (red u))
+cantidadDeAmigos red u = longitud (amigosDe red u)
 
 -- Funcion auxiliar "longitud" devuelve la longitud de la lista asociada
 longitud :: [Usuario] -> Int
