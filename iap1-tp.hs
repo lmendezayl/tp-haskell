@@ -75,9 +75,15 @@ estaUsuarioEnLista u ((u1,u2):xs) | u == u1 || u == u2 = True
 
 
 
--- describir qué hace la función: .....
+--3
+-- La funcion cantidadDeAmigos devuelve la longitud de la lista amigosDe
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
-cantidadDeAmigos = undefined
+cantidadDeAmigos red u = longitud (amigosDe (red u))
+
+-- Funcion auxiliar "longitud" devuelve la longitud de la lista asociada
+longitud :: [Usuario] -> Int
+longitud [] = 0
+longitud (x:xs) = 1 + longitud xs
 
 -- describir qué hace la función: .....
 usuarioConMasAmigos :: RedSocial -> Usuario
