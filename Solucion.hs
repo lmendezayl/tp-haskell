@@ -1,3 +1,4 @@
+module Solucion where
 -- Completar con los datos del grupo
 --
 -- Nombre de Grupo: No balls
@@ -85,9 +86,17 @@ longitud :: [Usuario] -> Int
 longitud [] = 0
 longitud (x:xs) = 1 + longitud xs
 
+--4
 -- describir qué hace la función: .....
 usuarioConMasAmigos :: RedSocial -> Usuario
-usuarioConMasAmigos = undefined
+usuarioConMasAmigos red = comparaUsuarios red (usuarios (red))
+
+
+comparaUsuarios :: RedSocial -> [Usuario] -> Usuario 
+comparaUsuarios red us  | longitud us == 1 = head us 
+                        | cantidadDeAmigos red (head (usuarios red)) >= cantidadDeAmigos red (head (tail (usuarios red))) = comparaUsuarios red ((head (usuarios red)) : tail (tail (usuarios red))) --Compara la cantidad de amigos del primer usuario con la cantidad del segundo.
+                        | otherwise = comparaUsuarios red (tail(usuarios red))
+
 
 -- describir qué hace la función: .....
 estaRobertoCarlos :: RedSocial -> Bool
