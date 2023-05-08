@@ -1,7 +1,7 @@
 -- Completar con los datos del grupo
 --
--- Nombre de Grupo: xx
--- Integrante 1: Nombre Apellido, email, LU
+-- Nombre de Grupo: No balls
+-- Integrante 1: Tiago Busso, bussotiago@gmail.com, 570/23
 -- Integrante 2: Nombre Apellido, email, LU
 -- Integrante 3: Nombre Apellido, email, LU
 -- Integrante 4: Nombre Apellido, email, LU
@@ -35,13 +35,45 @@ likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
 -- Ejercicios
-
+--1
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios = undefined
+nombresDeUsuarios red = sumarSegundosDistintos (usuarios red)
 
--- describir qué hace la función: .....
+--Funciones auxiliars ejercicio "nombresDeUsuarios"
+
+--La funcion sumarSegundosDistintos suma los segundos elementos de las tuplas del type Usuario siempre y cuando sean distintos 
+sumarSegundosDistintos :: [Usuario] -> [String]
+sumarSegundosDistintos [] = []
+sumarSegundosDistintos ((_,nombre):xs) | estaEnLista nombre xs = sumarSegundosDistintos xs 
+                                       | otherwise = nombre : sumarSegundosDistintos xs 
+
+--La funcion estaEnLista devuelve un booleano dependiendo de si el String que se ingresa esta en [Usuario]
+estaEnLista :: String -> [Usuario] -> Bool
+estaEnLista _ [] = False
+estaEnLista y ((_,nombre):xs) = y == nombre || estaEnLista y xs
+
+
+
+
+--2
+--La funcion amigosDe devuelve los usuarios relacionados con el usuario ingresado, ademas asegura que no haya res repetidos.
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe = undefined
+amigosDe red u  = sumarUsuariosDistintos u (relaciones red)  
+
+sumarUsuariosDistintos :: Usuario -> [Relacion] -> [Usuario]
+sumarUsuariosDistintos u [] = []
+sumarUsuariosDistintos u ((u1,u2):xs) | u == u1 && estaUsuarioEnLista u xs = [u2] ++ sumarUsuariosDistintos u xs
+                                      | u == u2 && estaUsuarioEnLista u xs= [u1] ++ sumarUsuariosDistintos u xs
+                                      | otherwise = sumarUsuariosDistintos u xs
+
+
+estaUsuarioEnLista :: Usuario -> [Relacion] -> Bool
+estaUsuarioEnLista _ [] = False
+estaUsuarioEnLista u ((u1,u2):xs) | u == u1 || u == u2 = True
+                                  | otherwise = estaUsuarioEnLista u xs
+
+
+
 
 -- describir qué hace la función: .....
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
