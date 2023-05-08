@@ -2,9 +2,9 @@
 --
 -- Nombre de Grupo: No balls
 -- Integrante 1: Tiago Busso, bussotiago@gmail.com, 570/23
--- Integrante 2: Nombre Apellido, email, LU
--- Integrante 3: Nombre Apellido, email, LU
--- Integrante 4: Nombre Apellido, email, LU
+-- Integrante 2: Lautaro Mendez Ayala, lmendezayl@gmail.com, 799/23
+-- Integrante 3: Rafael Monges Luces, rafaml2003@gmail.com, 888/23
+-- Integrante 4: Sabrina Veronica Koch, sabriverokoch@gmail.com, 684/23
 
 type Usuario = (Integer, String) -- (id, nombre)
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan
