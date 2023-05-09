@@ -105,9 +105,25 @@ estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos red | pertenece (usuarioConMasAmigos red) (usuarios red) && cantidadDeAmigos red (usuarioConMasAmigos red) > 10 = True
                       | otherwise = False
 
+--6
 -- describir qué hace la función: .....
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe = undefined
+publicacionesDe red u = sumaPublisDistintas (publicaciones red) u 
+
+sumaPublisDistintas :: [Publicacion] -> Usuario -> [Publicacion]
+sumaPublisDistintas (x:xs) u = if  laPublicacionEsDeU x u && not(estaRepetidaLaPubli x xs)
+                                            then x : sumaPublisDistintas xs u   
+                                                 else sumaPublisDistintas xs u
+
+laPublicacionEsDeU :: Publicacion -> Usuario -> Bool
+laPublicacionEsDeU (u1,str,l) u | u1 == u = True
+                                | otherwise = False
+
+estaRepetidaLaPubli :: Publicacion -> [Publicacion] -> Bool
+estaRepetidaLaPubli _ [] = False
+estaRepetidaLaPubli (u1, str1, l1) ((u2, str2, l2) : xs) | u1 == u2 && str1 == str2 = True
+                                                         | otherwise = False
+
 
 -- describir qué hace la función: .....
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
