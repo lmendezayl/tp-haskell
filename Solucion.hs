@@ -98,9 +98,12 @@ comparaUsuarios red us  | longitud us == 1 = head us
                         | otherwise = comparaUsuarios red (tail(usuarios red))
 
 
--- describir qué hace la función: .....
+-- 5
+-- La funcion estaRobertoCarlos ingresa una red, evalua cual es el usuario con mas amigos de esa red
+-- y a ese usuario le aplica la cantidad de 
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos = undefined
+estaRobertoCarlos red | pertenece (usuarioConMasAmigos red) (usuarios red) && cantidadDeAmigos red (usuarioConMasAmigos red) > 10 = True
+                      | otherwise = False
 
 -- describir qué hace la función: .....
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
