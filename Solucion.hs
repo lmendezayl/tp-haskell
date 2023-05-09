@@ -111,18 +111,13 @@ publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe red u = sumaPublisDistintas (publicaciones red) u 
 
 sumaPublisDistintas :: [Publicacion] -> Usuario -> [Publicacion]
-sumaPublisDistintas (x:xs) u = if  laPublicacionEsDeU x u && not(estaRepetidaLaPubli x xs)
+sumaPublisDistintas (x:xs) u = if  laPublicacionEsDeU x u && not(pertenece x xs)
                                             then x : sumaPublisDistintas xs u   
                                                  else sumaPublisDistintas xs u
 
 laPublicacionEsDeU :: Publicacion -> Usuario -> Bool
 laPublicacionEsDeU (u1,str,l) u | u1 == u = True
                                 | otherwise = False
-
-estaRepetidaLaPubli :: Publicacion -> [Publicacion] -> Bool
-estaRepetidaLaPubli _ [] = False
-estaRepetidaLaPubli (u1, str1, l1) ((u2, str2, l2) : xs) | u1 == u2 && str1 == str2 = True
-                                                         | otherwise = False
 
 
 -- describir qué hace la función: .....
@@ -140,3 +135,9 @@ tieneUnSeguidorFiel = undefined
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos = undefined
+
+-- Funciones auxiliares
+pertenece :: (Eq t) => t -> [t] -> Bool
+pertenece e s | longitud s == 0 = False
+              | e == head s = True
+              | otherwise = pertenece e (tail s)
