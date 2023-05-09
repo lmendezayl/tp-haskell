@@ -141,3 +141,8 @@ pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece e s | longitud s == 0 = False
               | e == head s = True
               | otherwise = pertenece e (tail s)
+              
+ -- Funcion auxiliar "longitud" devuelve la longitud de la lista asociada como entero.
+longitud :: [t] -> Int
+longitud [] = 0
+longitud (x:xs) = 1 + longitud xs
