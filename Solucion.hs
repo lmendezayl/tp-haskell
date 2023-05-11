@@ -101,7 +101,8 @@ publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe red u = sumaPublisDistintas (publicaciones red) u 
 
 sumaPublisDistintas :: [Publicacion] -> Usuario -> [Publicacion]
-sumaPublisDistintas (x:xs) u = if  laPublicacionEsDeU x u && not(pertenece x xs)
+sumaPublisDistintas [] u = []
+sumaPublisDistintas (x:xs) u = if  (laPublicacionEsDeU x u && not(pertenece x xs))
                                             then x : sumaPublisDistintas xs u   
                                                  else sumaPublisDistintas xs u
 
@@ -135,20 +136,15 @@ lesGustanLasMismasPublicaciones red u1 u2 = if publicacionesQueLeGustanA red u1 
                                                then True
                                                     else False 
 
-
 --9
 -- La funcion devuelve un booleano dependiendo de si todas para todas las publicaciones de un usuario u existe u2 que le haya puesto like
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
 tieneUnSeguidorFiel red u = undefined
 
 
-
-
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos = undefined
-
-
 
 
 -- Funciones auxiliares
