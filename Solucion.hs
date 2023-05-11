@@ -40,19 +40,11 @@ likesDePublicacion (_, _, us) = us
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios red = sumarSegundosDistintos (usuarios red)
 
---Funciones auxiliars ejercicio "nombresDeUsuarios"
-
 --La funcion sumarSegundosDistintos suma los segundos elementos de las tuplas del type Usuario siempre y cuando sean distintos 
 sumarSegundosDistintos :: [Usuario] -> [String]
 sumarSegundosDistintos [] = []
-sumarSegundosDistintos ((_,nombre):xs) | estaEnLista nombre xs = sumarSegundosDistintos xs 
+sumarSegundosDistintos ((_,nombre):xs) | pertenece nombre xs = sumarSegundosDistintos xs 
                                        | otherwise = nombre : sumarSegundosDistintos xs 
-
---La funcion estaEnLista devuelve un booleano dependiendo de si el String que se ingresa esta en [Usuario]
-estaEnLista :: String -> [Usuario] -> Bool
-estaEnLista _ [] = False
-estaEnLista y ((_,nombre):xs) = y == nombre || estaEnLista y xs
-
 
 
 
@@ -64,22 +56,18 @@ amigosDe red u  = sumarUsuariosDistintos u (relaciones red)
 --La funcion sumarUsuariosDistintos concatena los usuarios que no esten repetidos.
 sumarUsuariosDistintos :: Usuario -> [Relacion] -> [Usuario]
 sumarUsuariosDistintos u [] = []
-sumarUsuariosDistintos u ((u1,u2):xs) | u == u1 && not(estaRepetidaRel (u1, u2) xs) = [u2] ++ sumarUsuariosDistintos u xs
-                                      | u == u2 && not(estaRepetidaRel (u1, u2) xs) = [u1] ++ sumarUsuariosDistintos u xs
+sumarUsuariosDistintos u ((u1,u2):xs) | u == u1 && not(pertenece (u1, u2) xs) = [u2] ++ sumarUsuariosDistintos u xs
+                                      | u == u2 && not(pertenece (u1, u2) xs) = [u1] ++ sumarUsuariosDistintos u xs
                                       | otherwise = sumarUsuariosDistintos u xs
 
-
-estaRepetidaRel :: Relacion -> [Relacion] -> Bool
-estaRepetidaRel _ [] = False
-estaRepetidaRel (u1, u2) ((u3, u4) : xs) | u1 == u3 && u2 == u4 = True
-                                         | u1 == u4 && u2 == u3 = True
-                                         | otherwise = False
 
 
 --3
 -- La funcion cantidadDeAmigos devuelve la longitud de la lista amigosDe
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
 cantidadDeAmigos red u = longitud (amigosDe red u)
+
+
 
 --4
 -- describir qué hace la función: .....
@@ -93,12 +81,15 @@ comparaUsuarios red us  | longitud us == 1 = head us
                         | otherwise = comparaUsuarios red (tail(usuarios red))
 
 
+
 -- 5
 -- La funcion estaRobertoCarlos ingresa una red, evalua cual es el usuario con mas amigos de esa red
 -- y a ese usuario le aplica la cantidad de 
 estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos red | pertenece (usuarioConMasAmigos red) (usuarios red) && cantidadDeAmigos red (usuarioConMasAmigos red) > 10 = True
                       | otherwise = False
+
+
 
 --6
 -- describir qué hace la función: .....
@@ -113,6 +104,8 @@ sumaPublisDistintas (x:xs) u = if  laPublicacionEsDeU x u && not(pertenece x xs)
 laPublicacionEsDeU :: Publicacion -> Usuario -> Bool
 laPublicacionEsDeU (u1,str,l) u | u1 == u = True
                                 | otherwise = False
+
+
 
 
 -- describir qué hace la función: .....
