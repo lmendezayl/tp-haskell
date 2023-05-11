@@ -35,6 +35,8 @@ usuarioDePublicacion (u, _, _) = u
 likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
+
+
 -- Ejercicios
 --1
 nombresDeUsuarios :: RedSocial -> [String]
@@ -43,10 +45,12 @@ nombresDeUsuarios red = sumarSegundosDistintos (usuarios red)
 --La funcion sumarSegundosDistintos suma los segundos elementos de las tuplas del type Usuario siempre y cuando sean distintos 
 sumarSegundosDistintos :: [Usuario] -> [String]
 sumarSegundosDistintos [] = []
-sumarSegundosDistintos ((_,nombre):xs) | pertenece nombre xs = sumarSegundosDistintos xs 
-                                       | otherwise = nombre : sumarSegundosDistintos xs 
+sumarSegundosDistintos (x:xs) | estaEnLista (snd x) xs = sumarSegundosDistintos xs 
+                              | otherwise = (snd x) : sumarSegundosDistintos xs 
 
-
+estaEnLista :: String -> [Usuario] -> Bool
+estaEnLista _ [] = False
+estaEnLista y (x:xs) = y == snd x || estaEnLista y xs
 
 --2
 --La funcion amigosDe devuelve los usuarios relacionados con el usuario ingresado, ademas asegura que no haya res repetidos.
@@ -92,7 +96,7 @@ estaRobertoCarlos red | pertenece (usuarioConMasAmigos red) (usuarios red) && ca
 
 
 --6
--- describir qué hace la función: .....
+-- Devuelve la lista de todas las publicaciones subidas por un usuario de la red
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe red u = sumaPublisDistintas (publicaciones red) u 
 
@@ -107,29 +111,52 @@ laPublicacionEsDeU (u1,str,l) u | u1 == u = True
 
 
 
-
--- describir qué hace la función: .....
+--7
+-- La funcion devuelve la lista de publicaciones que le gustan a un usuario de la red
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA = undefined
+publicacionesQueLeGustanA red u = sumaSiUDioLike (publicaciones red) u
 
--- describir qué hace la función: .....
+
+sumaSiUDioLike :: [Publicacion] -> Usuario -> [Publicacion]
+sumaSiUDioLike l u | l == [] = []
+                   | uDioLike u (head l) && not (pertenece (head l) (tail l)) = head l :  sumaSiUDioLike (tail l) u
+                   | otherwise = sumaSiUDioLike (tail l) u
+
+
+uDioLike :: Usuario -> Publicacion -> Bool
+uDioLike u p | pertenece u (likesDePublicacion p) = True
+             | otherwise = False
+
+
+--8
+-- La funcion devuelve un booleano dependiendo de si las publicaciones que le gustan a un usuario son exactamente las mismas que las que le gustan a otro usuario
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
-lesGustanLasMismasPublicaciones = undefined
+lesGustanLasMismasPublicaciones red u1 u2 = if publicacionesQueLeGustanA red u1 == publicacionesQueLeGustanA red u2 
+                                               then True
+                                                    else False 
 
--- describir qué hace la función: .....
+
+--9
+-- La funcion devuelve un booleano dependiendo de si todas para todas las publicaciones de un usuario u existe u2 que le haya puesto like
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel = undefined
+tieneUnSeguidorFiel red u = undefined
+
+
+
 
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos = undefined
+
+
+
 
 -- Funciones auxiliares
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece e s | longitud s == 0 = False
               | e == head s = True
               | otherwise = pertenece e (tail s)
-              
+
  -- Funcion auxiliar "longitud" devuelve la longitud de la lista asociada como entero.
 longitud :: [t] -> Int
 longitud [] = 0
