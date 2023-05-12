@@ -36,8 +36,10 @@ likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
 
-
 -- Ejercicios
+
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 --1
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios red = sumarSegundosDistintos (usuarios red)
@@ -52,6 +54,8 @@ estaEnLista :: String -> [Usuario] -> Bool
 estaEnLista _ [] = False
 estaEnLista y (x:xs) = y == snd x || estaEnLista y xs
 
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 --2
 --La funcion amigosDe devuelve los usuarios relacionados con el usuario ingresado, ademas asegura que no haya res repetidos.
 amigosDe :: RedSocial -> Usuario -> [Usuario]
@@ -64,27 +68,26 @@ sumarUsuariosDistintos u ((u1,u2):xs) | u == u1 && not(pertenece (u1, u2) xs) = 
                                       | u == u2 && not(pertenece (u1, u2) xs) = [u1] ++ sumarUsuariosDistintos u xs
                                       | otherwise = sumarUsuariosDistintos u xs
 
-
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --3
 -- La funcion cantidadDeAmigos devuelve la longitud de la lista amigosDe
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
 cantidadDeAmigos red u = longitud (amigosDe red u)
 
-
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --4
 -- describir qué hace la función: .....
 usuarioConMasAmigos :: RedSocial -> Usuario
-usuarioConMasAmigos red = comparaUsuarios red (usuarios (red))
+--usuarioConMasAmigos red = comparaUsuarios red (usuarios (red))
+usuarioConMasAmigos red | longitud (usuarios red) == 1 = head (usuarios red)
+                        | cantidadDeAmigos red (head (usuarios red)) >= cantidadDeAmigos red (head (tail (usuarios red))) = usuarioConMasAmigos ((head (usuarios red): tail (tail (usuarios red))), relaciones red, publicaciones red)
+                        | otherwise = usuarioConMasAmigos (tail (usuarios red), relaciones red, publicaciones red)
+                 
 
 
-comparaUsuarios :: RedSocial -> [Usuario] -> Usuario 
-comparaUsuarios red us  | longitud us == 1 = head us 
-                        | cantidadDeAmigos red (head (usuarios red)) >= cantidadDeAmigos red (head (tail (usuarios red))) = comparaUsuarios red ((head (usuarios red)) : tail (tail (usuarios red))) --Compara la cantidad de amigos del primer usuario con la cantidad del segundo.
-                        | otherwise = comparaUsuarios red (tail(usuarios red))
-
-
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -- 5
 -- La funcion estaRobertoCarlos ingresa una red, evalua cual es el usuario con mas amigos de esa red
@@ -93,7 +96,7 @@ estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos red | pertenece (usuarioConMasAmigos red) (usuarios red) && cantidadDeAmigos red (usuarioConMasAmigos red) > 10 = True
                       | otherwise = False
 
-
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --6
 -- Devuelve la lista de todas las publicaciones subidas por un usuario de la red
@@ -110,7 +113,7 @@ laPublicacionEsDeU :: Publicacion -> Usuario -> Bool
 laPublicacionEsDeU (u1,str,l) u | u1 == u = True
                                 | otherwise = False
 
-
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --7
 -- La funcion devuelve la lista de publicaciones que le gustan a un usuario de la red
@@ -128,6 +131,7 @@ uDioLike :: Usuario -> Publicacion -> Bool
 uDioLike u p | pertenece u (likesDePublicacion p) = True
              | otherwise = False
 
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --8
 -- La funcion devuelve un booleano dependiendo de si las publicaciones que le gustan a un usuario son exactamente las mismas que las que le gustan a otro usuario
@@ -136,11 +140,16 @@ lesGustanLasMismasPublicaciones red u1 u2 = if publicacionesQueLeGustanA red u1 
                                                then True
                                                     else False 
 
---9
--- La funcion devuelve un booleano dependiendo de si todas para todas las publicaciones de un usuario u existe u2 que le haya puesto like
-tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel red u = undefined
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+--9
+-- La funcion devuelve un booleano dependiendo de si todas  las publicaciones de un usuario u existe u2 que le haya puesto like
+tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
+tieneUnSeguidorFiel red u = publicaciones red 
+
+
+
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
@@ -157,3 +166,7 @@ pertenece e s | longitud s == 0 = False
 longitud :: [t] -> Int
 longitud [] = 0
 longitud (x:xs) = 1 + longitud xs
+
+-- Funcion auxiliar que devuelve la red sin el primer usuario
+redSinPrimerU :: RedSocial -> RedSocial
+redSinPrimerU
