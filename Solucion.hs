@@ -141,12 +141,20 @@ lesGustanLasMismasPublicaciones red u1 u2 = if publicacionesQueLeGustanA red u1 
                                                     else False 
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 --9
 -- La funcion devuelve un booleano dependiendo de si todas  las publicaciones de un usuario u existe u2 que le haya puesto like
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel red u = publicaciones red 
+tieneUnSeguidorFiel red u | publicacionesDe red u == []  = False 
+			  | longitud (publicacionesDe red u) == 1 && likesDePublicacion (head (publicacionesDe red u)) /= 0 = True -- Si hay una sola publi del usuario u y tiene 1 like o mas, es true.
+			  | likesDePublicacion (head (publicacionesDe red u)) == 0 = False --Si hay una publi con 0 likes entonces no hay seguidor fiel 
+			  
+tieneUnSeguidorFiel red u = if cantidadDeApariciones (head (amigosDe red u)) (likesDeTodasLasPublisDeU red u) == longitud (publicacionesDe red u)
+			       then True
+				    else tieneUnSeguidorFiel ((tail (usuarios red)), relaciones red, publicaciones red) 
 
+likesDeTodasLasPublisDeU :: RedSocial -> Usuario -> [Usuario]
+likesDeTodasLasPublisDeU red u | publicacionesDe red u == [] = []
+			       | otherwise = likesDePublicacion (head (publicacionesDe red u)) ++ likesDeTodasLasPublisDeU (usuarios red, relaciones red, tail (publicaciones red)) u
 
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,6 +175,10 @@ longitud :: [t] -> Int
 longitud [] = 0
 longitud (x:xs) = 1 + longitud xs
 
--- Funcion auxiliar que devuelve la red sin el primer usuario
-redSinPrimerU :: RedSocial -> RedSocial
-redSinPrimerU
+-- Funcion auxiliar que deuelve la cantidad de veces que se repite un elemento en una lista 
+cantidadDeApariciones :: (Eq t) => t -> [t] -> Int
+cantidadDeApariciones _ [] = 0
+cantidadDeApariciones e (x:xs) | e == x = 1 + cantidadDeApariciones e xs
+			       | e /= x = cantidadDeAparicsumaPublisDistintas (x:xs) u = if  (laPublicacionEsDeU x u && not(pertenece x xs))
+                                            then x : sumaPublisDistintas xs u
+                                                 else sumaPublisDistintas xs u
