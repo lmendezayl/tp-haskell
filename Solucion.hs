@@ -145,26 +145,28 @@ lesGustanLasMismasPublicaciones red u1 u2 = if publicacionesQueLeGustanA red u1 
 -- La funcion devuelve un booleano dependiendo de si todas  las publicaciones de un usuario u existe u2 que le haya puesto like
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
 tieneUnSeguidorFiel red u | publicacionesDe red u == []  = False 
-			  | longitud (publicacionesDe red u) == 1 && likesDePublicacion (head (publicacionesDe red u)) /= 0 = True -- Si hay una sola publi del usuario u y tiene 1 like o mas, es true.
-			  | likesDePublicacion (head (publicacionesDe red u)) == 0 = False --Si hay una publi con 0 likes entonces no hay seguidor fiel 
-			  
-tieneUnSeguidorFiel red u = if cantidadDeApariciones (head (amigosDe red u)) (likesDeTodasLasPublisDeU red u) == longitud (publicacionesDe red u)
-			       then True
-				    else tieneUnSeguidorFiel ((tail (usuarios red)), relaciones red, publicaciones red) 
+                          | longitud (publicacionesDe red u) == 1 && (likesDePublicacion (head (publicacionesDe red u)) /= []) = True -- Si hay una sola publi del usuario u y tiene 1 like o mas, es true.
+                          | likesDePublicacion (head (publicacionesDe red u)) == [] = False --Si hay una publi con 0 likes entonces no hay seguidor fiel 
+
+tieneUnSeguidorFiel red u = if cantidadDeApariciones (head (amigosDe red u)) (likesDeTodasLasPublisDeU red u) == longitud (publicacionesDe red u) 
+                              then True 
+                                   else tieneUnSeguidorFiel ((tail (usuarios red)), relaciones red, publicaciones red) u 
 
 likesDeTodasLasPublisDeU :: RedSocial -> Usuario -> [Usuario]
 likesDeTodasLasPublisDeU red u | publicacionesDe red u == [] = []
-			       | otherwise = likesDePublicacion (head (publicacionesDe red u)) ++ likesDeTodasLasPublisDeU (usuarios red, relaciones red, tail (publicaciones red)) u
+                               | otherwise = likesDePublicacion (head (publicacionesDe red u)) ++ likesDeTodasLasPublisDeU (usuarios red, relaciones red, tail (publicaciones red)) u
 
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+-- 10
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos = undefined
 
+-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-- Funciones auxiliares --
 
--- Funciones auxiliares
+-- Funcion auxiliar "pertenece" verifica si un elemento pertenece a una lista.
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece e s | longitud s == 0 = False
               | e == head s = True
@@ -175,10 +177,8 @@ longitud :: [t] -> Int
 longitud [] = 0
 longitud (x:xs) = 1 + longitud xs
 
--- Funcion auxiliar que deuelve la cantidad de veces que se repite un elemento en una lista 
+-- Funcion auxiliar que deuelve la cantidad de veces que se repite un elemento en una lista.
 cantidadDeApariciones :: (Eq t) => t -> [t] -> Int
 cantidadDeApariciones _ [] = 0
 cantidadDeApariciones e (x:xs) | e == x = 1 + cantidadDeApariciones e xs
-			       | e /= x = cantidadDeAparicsumaPublisDistintas (x:xs) u = if  (laPublicacionEsDeU x u && not(pertenece x xs))
-                                            then x : sumaPublisDistintas xs u
-                                                 else sumaPublisDistintas xs u
+                               | e /= x = cantidadDeApariciones e xs
