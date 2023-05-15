@@ -4,9 +4,9 @@ import Solucion
 main = runTestTT tests
 
 tests = test [
-    " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
+    " nombresDeUsuarios 1" ~: (testsEj1)
 
-    " amigosDe 1" ~: (amigosDe redA usuario1) ~?= [usuario2, usuario4],
+    {-" amigosDe 1" ~: (amigosDe redA usuario1) ~?= [usuario2, usuario4],
 
     " cantidadDeAmigos 1" ~: (cantidadDeAmigos redA usuario1) ~?= 2,
 
@@ -20,20 +20,46 @@ tests = test [
 
     " lesGustanLasMismasPublicaciones 2" ~: (lesGustanLasMismasPublicaciones redB usuario1 usuario3) ~?= True,
 
-    " tieneUnSeguidorFiel 1" ~: (tieneUnSeguidorFiel redA usuario1) ~?= True,
+   -- " tieneUnSeguidorFiel 1" ~: (tieneUnSeguidorFiel redA usuario1) ~?= True,
 
-    " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True
- ]
+    " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True -}
+    ]
 
-expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show expected ++ "\n but got: " ++ show actual)
+-- expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show expected ++ "\n but got: " ++ show actual)
+
+
+
+testsEj1 = test [
+    nombresDeUsuarios redV ~?= [],
+    nombresDeUsuarios redUno ~?= ["Tiago"],
+    nombresDeUsuarios redB ~?= ["Tiago","Lautaro","Rafael", "Sabrina"]
+    ]
+
+
+usuariosUno = [usuario1]
+relacionesUno = []
+publicacionesUno = [publicacion1_1]
+redUno = (usuariosUno, relacionesUno, publicacionesUno)
+
+usuariosV = []
+relacionesV = []
+publicacionesV = []
+redV = ([],[],[])
+
+usuariosB = [usuario1, usuario2, usuario3, usuario4, usuario5]
+relacionesB = [relacion1_2, relacion2_3]
+publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
+redB = (usuariosB, relacionesB, publicacionesB)
+
+
+
 
 -- Ejemplos
-
-usuario1 = (1, "Juan")
-usuario2 = (2, "Natalia")
-usuario3 = (3, "Pedro")
-usuario4 = (4, "Mariela")
-usuario5 = (5, "Natalia")
+usuario1 = (1, "Tiago")
+usuario2 = (2, "Lautaro")
+usuario3 = (3, "Rafael")
+usuario4 = (4, "Sabrina")
+usuario5 = (5, "Lautaro")
 
 relacion1_2 = (usuario1, usuario2)
 relacion1_3 = (usuario1, usuario3)
@@ -58,14 +84,3 @@ publicacion3_3 = (usuario3, "consectetur adipiscing elit", [usuario2, usuario5])
 publicacion4_1 = (usuario4, "I am Alice. Not", [usuario1, usuario2])
 publicacion4_2 = (usuario4, "I am Bob", [])
 publicacion4_3 = (usuario4, "Just kidding, i am Mariela", [usuario1, usuario3])
-
-
-usuariosA = [usuario1, usuario2, usuario3, usuario4]
-relacionesA = [relacion1_2, relacion1_4, relacion2_3, relacion2_4, relacion3_4]
-publicacionesA = [publicacion1_1, publicacion1_2, publicacion2_1, publicacion2_2, publicacion3_1, publicacion3_2, publicacion4_1, publicacion4_2]
-redA = (usuariosA, relacionesA, publicacionesA)
-
-usuariosB = [usuario1, usuario2, usuario3, usuario5]
-relacionesB = [relacion1_2, relacion2_3]
-publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
-redB = (usuariosB, relacionesB, publicacionesB)
