@@ -42,17 +42,10 @@ likesDePublicacion (_, _, us) = us
 
 --1
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios red = sumarSegundosDistintos (usuarios red)
+nombresDeUsuarios red  | usuarios red == [] = [] 
+                       | longitud (usuarios red) == 1 = [nombreDeUsuario (head (usuarios red))]
+                       | otherwise = snd (head (eliminarRepetidos (usuarios red))) : nombresDeUsuarios (tail (eliminarRepetidos (usuarios red)), relaciones red, publicaciones red)
 
---La funcion sumarSegundosDistintos suma los segundos elementos de las tuplas del type Usuario siempre y cuando sean distintos 
-sumarSegundosDistintos :: [Usuario] -> [String]
-sumarSegundosDistintos [] = []
-sumarSegundosDistintos (x:xs) | estaEnLista (snd x) xs = sumarSegundosDistintos xs 
-                              | otherwise = (snd x) : sumarSegundosDistintos xs 
-
-estaEnLista :: String -> [Usuario] -> Bool
-estaEnLista _ [] = False
-estaEnLista y (x:xs) = y == snd x || estaEnLista y xs
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -96,6 +89,7 @@ estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos red | pertenece (usuarioConMasAmigos red) (usuarios red) && cantidadDeAmigos red (usuarioConMasAmigos red) > 10 = True
                       | otherwise = False
 
+
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --6
@@ -136,32 +130,36 @@ uDioLike u p | pertenece u (likesDePublicacion p) = True
 --8
 -- La funcion devuelve un booleano dependiendo de si las publicaciones que le gustan a un usuario son exactamente las mismas que las que le gustan a otro usuario
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
-lesGustanLasMismasPublicaciones red u1 u2 = if publicacionesQueLeGustanA red u1 == publicacionesQueLeGustanA red u2 
-                                               then True
-                                                    else False 
+lesGustanLasMismasPublicaciones red u1 u2 | publicacionesQueLeGustanA red u1 == publicacionesQueLeGustanA red u2 = True
+                                          | otherwise = False 
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
---9
--- La funcion devuelve un booleano dependiendo de si todas  las publicaciones de un usuario u existe u2 que le haya puesto like
+--9 
+-- La funcion devuelve un booleano dependiendo de si todas  las publicaciones de un usuario u existe u2 que le haya puesto like 
+{-
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
 tieneUnSeguidorFiel red u | publicacionesDe red u == []  = False 
                           | longitud (publicacionesDe red u) == 1 && (likesDePublicacion (head (publicacionesDe red u)) /= []) = True -- Si hay una sola publi del usuario u y tiene 1 like o mas, es true.
                           | likesDePublicacion (head (publicacionesDe red u)) == [] = False --Si hay una publi con 0 likes entonces no hay seguidor fiel 
-
-tieneUnSeguidorFiel red u = if cantidadDeApariciones (head (amigosDe red u)) (likesDeTodasLasPublisDeU red u) == longitud (publicacionesDe red u) 
-                              then True 
-                                   else tieneUnSeguidorFiel ((tail (usuarios red)), relaciones red, publicaciones red) u 
-
+                          |
+amigosDe :: RedSocial -> Usuario -> [Usuario] cantidadDeApariciones (head (amigosDe red u)) (likesDeTodasLasPublisDeU red u) == longitud (publicacionesDe red u) = True 
+                      --    | otherwise = tieneUnSeguidorFiel ((tail (usuarios red)), relaciones red, publicaciones red) u 
+                        |otherwise = True -- este othw no va, es solo por comodidad. 
 likesDeTodasLasPublisDeU :: RedSocial -> Usuario -> [Usuario]
 likesDeTodasLasPublisDeU red u | publicacionesDe red u == [] = []
                                | otherwise = likesDePublicacion (head (publicacionesDe red u)) ++ likesDeTodasLasPublisDeU (usuarios red, relaciones red, tail (publicaciones red)) u
-
+-}
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -- 10
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos = undefined
+existeSecuenciaDeAmigos red u1 u2 | longitud (usuarios red) == 2 && pertenece (head (usuarios red)) (amigosDe red (head(tail (usuarios red)))) = True  
+existeSecuenciaDeAmigos red u1 u2 | pertenece (head (u1AlPrincipiou2AlFinal (usuarios red) u1 u2)) (amigosDe red (head (tail (u1AlPrincipiou2AlFinal (usuarios red) u1 u2)))) == True = existeSecuenciaDeAmigos ((tail (u1AlPrincipiou2AlFinal (usuarios red) u1 u2)), relaciones red, publicaciones red) u1 u2 
+                                  | otherwise = False
+
+u1AlPrincipiou2AlFinal :: [Usuario] -> Usuario -> Usuario -> [Usuario] -- Testeado, el problema esta en el codigo exsecuenamigos
+u1AlPrincipiou2AlFinal us u1 u2 = u1 : (quitarTodos u1 (quitarTodos u2 us)) ++ [u2]  
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -- Funciones auxiliares --
@@ -182,3 +180,13 @@ cantidadDeApariciones :: (Eq t) => t -> [t] -> Int
 cantidadDeApariciones _ [] = 0
 cantidadDeApariciones e (x:xs) | e == x = 1 + cantidadDeApariciones e xs
                                | e /= x = cantidadDeApariciones e xs
+
+quitarTodos :: (Eq t) => t -> [t] -> [t]
+quitarTodos x xs | xs == [] = []
+                 | x == head xs = [] ++ quitarTodos x (tail xs)
+                 | otherwise = [head xs] ++ quitarTodos x (tail xs)
+
+eliminarRepetidos :: (Eq t) => [t] -> [t]
+eliminarRepetidos (x:xs) | xs == [] = [] 
+                         | pertenece x xs = [x] ++ quitarTodos x (eliminarRepetidos xs)
+                         | otherwise = [x] ++ eliminarRepetidos xs
