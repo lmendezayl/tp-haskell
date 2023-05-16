@@ -1,5 +1,4 @@
 module Solucion where
--- Completar con los datos del grupo
 --
 -- Nombre de Grupo: No balls
 -- Integrante 1: Tiago Busso, bussotiago@gmail.com, 570/23
@@ -41,6 +40,7 @@ likesDePublicacion (_, _, us) = us
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --1
+-- Devuelve una lista de nombres de usuario dada una red.
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios red | usuarios red == [] = [] 
                       | longitud (usuarios red) == 1 = [nombreDeUsuario (head (usuarios red))]
@@ -50,16 +50,14 @@ todosLosNombres ::  RedSocial -> [String]
 todosLosNombres red | usuarios red == [] = []
                     | otherwise = [nombreDeUsuario (head (usuarios red))] ++ todosLosNombres (tail (usuarios red), relaciones red, publicaciones red)
 
-
-
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --2
---La funcion amigosDe devuelve los usuarios relacionados con el usuario ingresado, ademas asegura que no haya res repetidos.
+-- Devuelve los usuarios relacionados con el usuario ingresado.
 amigosDe :: RedSocial -> Usuario -> [Usuario]
 amigosDe red u  = sumarUsuariosDistintos u (relaciones red)  
 
---La funcion sumarUsuariosDistintos concatena los usuarios que no esten repetidos.
+-- Concatena los usuarios que no esten repetidos.
 sumarUsuariosDistintos :: Usuario -> [Relacion] -> [Usuario]
 sumarUsuariosDistintos u [] = []
 sumarUsuariosDistintos u ((u1,u2):xs) | u == u1 && not(pertenece (u1, u2) xs) = [u2] ++ sumarUsuariosDistintos u xs
@@ -69,36 +67,31 @@ sumarUsuariosDistintos u ((u1,u2):xs) | u == u1 && not(pertenece (u1, u2) xs) = 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --3
--- La funcion cantidadDeAmigos devuelve la longitud de la lista amigosDe
+-- Devuelve la cantidad de amigos de un usuario.
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
 cantidadDeAmigos red u = longitud (amigosDe red u)
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --4
--- describir qué hace la función: .....
+-- Devuelve cual es el usuario con mas amigos de la red.
 usuarioConMasAmigos :: RedSocial -> Usuario
---usuarioConMasAmigos red = comparaUsuarios red (usuarios (red))
 usuarioConMasAmigos red | longitud (usuarios red) == 1 = head (usuarios red)
                         | cantidadDeAmigos red (head (usuarios red)) >= cantidadDeAmigos red (head (tail (usuarios red))) = usuarioConMasAmigos ((head (usuarios red): tail (tail (usuarios red))), relaciones red, publicaciones red)
                         | otherwise = usuarioConMasAmigos (tail (usuarios red), relaciones red, publicaciones red)
-                 
-
-
+               
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -- 5
--- La funcion estaRobertoCarlos ingresa una red, evalua cual es el usuario con mas amigos de esa red
--- y a ese usuario le aplica la cantidad de 
+-- Verifica si existe un usuario que posea mas de 10 amigos en la red.
 estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos red | pertenece (usuarioConMasAmigos red) (usuarios red) && cantidadDeAmigos red (usuarioConMasAmigos red) > 10 = True
                       | otherwise = False
 
-
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --6
--- Devuelve la lista de todas las publicaciones subidas por un usuario de la red
+-- Devuelve la lista de todas las publicaciones subidas por un usuario de la red.
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe red u = sumaPublisDistintas (publicaciones red) u 
 
@@ -115,7 +108,7 @@ laPublicacionEsDeU (u1,str,l) u | u1 == u = True
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --7
--- La funcion devuelve la lista de publicaciones que le gustan a un usuario de la red
+-- Devuelve la lista de publicaciones que le gustan a un usuario de la red.
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA red u = sumaSiUDioLike (publicaciones red) u
 
@@ -133,7 +126,7 @@ uDioLike u p | pertenece u (likesDePublicacion p) = True
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --8
--- La funcion devuelve un booleano dependiendo de si las publicaciones que le gustan a un usuario son exactamente las mismas que las que le gustan a otro usuario
+-- Verifica si las publicaciones que le gustan a un usuario son exactamente las mismas que las que le gustan a otro usuario.
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones red u1 u2 | publicacionesQueLeGustanA red u1 == publicacionesQueLeGustanA red u2 = True
                                           | otherwise = False 
@@ -157,7 +150,7 @@ likesDeTodasLasPublisDeU red u | publicacionesDe red u == [] = []
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -- 10
--- describir qué hace la función: .....
+-- Verifica si existe una cadena de amigos en comun posible entre un usuario y otro en la red.
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos red u1 u2 | longitud (usuarios red) == 2 && pertenece (head (usuarios red)) (amigosDe red (head(tail (usuarios red)))) = True  
 existeSecuenciaDeAmigos red u1 u2 | pertenece (head (u1AlPrincipiou2AlFinal (usuarios red) u1 u2)) (amigosDe red (head (tail (u1AlPrincipiou2AlFinal (usuarios red) u1 u2)))) == True = existeSecuenciaDeAmigos ((tail (u1AlPrincipiou2AlFinal (usuarios red) u1 u2)), relaciones red, publicaciones red) u1 u2 
@@ -167,30 +160,33 @@ u1AlPrincipiou2AlFinal :: [Usuario] -> Usuario -> Usuario -> [Usuario] -- Testea
 u1AlPrincipiou2AlFinal us u1 u2 = u1 : (quitarTodos u1 (quitarTodos u2 us)) ++ [u2]  
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
--- Funciones auxiliares --
 
--- Funcion auxiliar "pertenece" verifica si un elemento pertenece a una lista.
+
+-- # Funciones auxiliares # --
+
+-- Verifica si un elemento pertenece a una lista.
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece e s | longitud s == 0 = False
               | e == head s = True
               | otherwise = pertenece e (tail s)
 
- -- Funcion auxiliar "longitud" devuelve la longitud de la lista asociada como entero.
+ -- Devuelve la longitud de la lista asociada como entero.
 longitud :: [t] -> Int
 longitud [] = 0
 longitud (x:xs) = 1 + longitud xs
 
--- Funcion auxiliar que deuelve la cantidad de veces que se repite un elemento en una lista.
+-- Devuelve la cantidad de veces que se repite un elemento en una lista.
 cantidadDeApariciones :: (Eq t) => t -> [t] -> Int
 cantidadDeApariciones _ [] = 0
 cantidadDeApariciones e (x:xs) | e == x = 1 + cantidadDeApariciones e xs
                                | e /= x = cantidadDeApariciones e xs
-
+-- Devuelve la lista ingresada sin el elemento ingresado. 
 quitarTodos :: (Eq t) => t -> [t] -> [t]
 quitarTodos x xs | xs == [] = []
                  | x == head xs = [] ++ quitarTodos x (tail xs)
                  | otherwise = [head xs] ++ quitarTodos x (tail xs)
 
+-- Devuelve una lista con todas las apariciones adicionales de elementos de la lista borrados.
 eliminarRepetidos :: (Eq t) => [t] -> [t]
 eliminarRepetidos [] = []
 eliminarRepetidos (x:xs) | pertenece x xs = [x] ++ quitarTodos x xs
