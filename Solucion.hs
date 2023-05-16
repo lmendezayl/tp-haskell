@@ -42,9 +42,14 @@ likesDePublicacion (_, _, us) = us
 
 --1
 nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios red  | usuarios red == [] = [] 
-                       | longitud (usuarios red) == 1 = [nombreDeUsuario (head (usuarios red))]
-                       | otherwise = snd (head (eliminarRepetidos (usuarios red))) : nombresDeUsuarios (tail (eliminarRepetidos (usuarios red)), relaciones red, publicaciones red)
+nombresDeUsuarios red | usuarios red == [] = [] 
+                      | longitud (usuarios red) == 1 = [nombreDeUsuario (head (usuarios red))]
+                      | otherwise = eliminarRepetidos (todosLosNombres red)
+                        
+todosLosNombres ::  RedSocial -> [String]
+todosLosNombres red | usuarios red == [] = []
+                    | otherwise = [nombreDeUsuario (head (usuarios red))] ++ todosLosNombres (tail (usuarios red), relaciones red, publicaciones red)
+
 
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,6 +192,7 @@ quitarTodos x xs | xs == [] = []
                  | otherwise = [head xs] ++ quitarTodos x (tail xs)
 
 eliminarRepetidos :: (Eq t) => [t] -> [t]
-eliminarRepetidos (x:xs) | xs == [] = [] 
-                         | pertenece x xs = [x] ++ quitarTodos x (eliminarRepetidos xs)
+eliminarRepetidos [] = []
+eliminarRepetidos (x:xs) | pertenece x xs = [x] ++ quitarTodos x xs
                          | otherwise = [x] ++ eliminarRepetidos xs
+
