@@ -4,15 +4,15 @@ import Solucion
 main = runTestTT tests
 
 tests = test [
-    " nombresDeUsuarios 1" ~: (testSuitEj1),
+    " nombresDeUsuarios 1" ~: (testSuiteEj1),
 
-    " amigosDe 1" ~: (testSuitEj2),
+    " amigosDe 1" ~: (testSuiteEj2),
 
-    " cantidadDeAmigos 1" ~: (testSuitEj3),
+    " cantidadDeAmigos 1" ~: (testSuiteEj3),
 
-    " usuarioConMasAmigos 1" ~: (testSuitEj4),
+    " usuarioConMasAmigos 1" ~: (testSuiteEj4),
 
-    " estaRobertoCarlos 1" ~: (estaRobertoCarlos redA) ~?= False
+    " estaRobertoCarlos 1" ~: (testSuiteEj5)
 {-
     " publicacionesDe 1" ~: (publicacionesDe redA usuario2) ~?= [publicacion2_1, publicacion2_2],
 
@@ -29,34 +29,34 @@ tests = test [
 
 
 
-testSuitEj1 = test [
+testSuiteEj1 = test [
     "redVacia" ~: nombresDeUsuarios redV ~?= [],
     "soloUnUsuarioEnRed" ~: nombresDeUsuarios redUno ~?= ["Tiago"],
     "redNombreRepetido" ~: nombresDeUsuarios redB ~?= ["Tiago","Lautaro","Rafael", "Sabrina"],
     "casoNormal" ~: nombresDeUsuarios redA ~?= ["Tiago","Lautaro","Rafael", "Sabrina"]
     ]
 
-testSuitEj2 = test [
+testSuiteEj2 = test [
     "soloUnUsuarioEnRed" ~: amigosDe redUno usuario1 ~?= [],
     "usuarioSinAmigos" ~: amigosDe redA usuario1 ~?= [],
     "casoNormal" ~: amigosDe redA usuario2 ~?= [usuario3, usuario4]
     ]
 
 
-testSuitEj3 = test [
+testSuiteEj3 = test [
     "soloUnUsuarioEnRed" ~: cantidadDeAmigos redUno usuario1 ~?= 0,
     "usuarioSinAmigos" ~: cantidadDeAmigos redA usuario1 ~?= 0,
     "casoNormal" ~: cantidadDeAmigos redA usuario2 ~?= 2
     ]    
 
-testSuitEj4 = test [
+testSuiteEj4 = test [
     "soloUnUsuarioEnRed" ~: usuarioConMasAmigos redUno ~?= usuario1,
     "nadieTieneAmigos" ~: usuarioConMasAmigos redDos ~?= usuario1,
     "mismaCantAmigos" ~: usuarioConMasAmigos redC ~?= usuario1,
     "casoNormal" ~: usuarioConMasAmigos redB  ~?=  usuario2
     ]
 
-testSuitEj5 = test [
+testSuiteEj5 = test [
      "soloUnUsuarioEnRed" ~: estaRobertoCarlos redUno ~?= False,
      "nadieTieneDiezOMasAmigos" ~: estaRobertoCarlos redC ~?= False,
      "CasoNormal" ~: estaRobertoCarlos redD ~?= True
