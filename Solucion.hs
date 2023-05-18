@@ -138,7 +138,6 @@ lesGustanLasMismasPublicaciones red u1 u2 | publicacionesQueLeGustanA red u1 == 
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
 tieneUnSeguidorFiel red u = seguidorFiel (amigosDe red u) (publicacionesDe red u) 
 
--- Función auxiliar: verifica si hay un seguidor fiel
 seguidorFiel :: [Usuario] -> [Publicacion] -> Bool
 seguidorFiel _ [] = False
 seguidorFiel [] _ = False  
