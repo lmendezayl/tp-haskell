@@ -1,5 +1,5 @@
 module Solucion where
-
+--
 -- Nombre de Grupo: No balls
 -- Integrante 1: Tiago Busso, bussotiago@gmail.com, 570/23
 -- Integrante 2: Lautaro Mendez Ayala, lmendezayl@gmail.com, 799/23
@@ -44,25 +44,25 @@ likesDePublicacion (_, _, us) = us
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios red | usuarios red == [] = [] 
                       | longitud (usuarios red) == 1 = [nombreDeUsuario (head (usuarios red))]
-                      | otherwise = eliminarRepetidos (todosLosNombres red)
+                      | otherwise = eliminarRepetidos (proyectarNombres red)
                         
-todosLosNombres ::  RedSocial -> [String]
-todosLosNombres red | usuarios red == [] = []
-                    | otherwise = [nombreDeUsuario (head (usuarios red))] ++ todosLosNombres (tail (usuarios red), relaciones red, publicaciones red)
+proyectarNombres ::  RedSocial -> [String]
+proyectarNombres red | usuarios red == [] = []
+                     | otherwise = [nombreDeUsuario (head (usuarios red))] ++ proyectarNombres (tail (usuarios red), relaciones red, publicaciones red)
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --2
 -- Devuelve los usuarios relacionados con el usuario ingresado.
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe red u  = sumarUsuariosDistintos u (relaciones red)  
+amigosDe red u  = sumaDistintos u (relaciones red)  
 
 -- Concatena los usuarios que no esten repetidos.
 sumarUsuariosDistintos :: Usuario -> [Relacion] -> [Usuario]
 sumarUsuariosDistintos u [] = []
-sumarUsuariosDistintos u ((u1,u2):xs) | u == u1 && not(pertenece (u1, u2) xs) = [u2] ++ sumarUsuariosDistintos u xs
-                                      | u == u2 && not(pertenece (u1, u2) xs) = [u1] ++ sumarUsuariosDistintos u xs
-                                      | otherwise = sumarUsuariosDistintos u xs
+sumarUsuariosDistintos u ((u1,u2):rels) | u == u1 && not(pertenece (u1, u2) rels) = [u2] ++ sumarUsuariosDistintos u rels
+                                        | u == u2 && not(pertenece (u1, u2) rels) = [u1] ++ sumarUsuariosDistintos u rels
+                                        | otherwise = sumarUsuariosDistintos u rels
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -112,16 +112,11 @@ laPublicacionEsDeU (u1,str,l) u | u1 == u = True
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA red u = sumaSiUDioLike (publicaciones red) u
 
-
+-- Devuelve una lista de publicaciones a las que un 
 sumaSiUDioLike :: [Publicacion] -> Usuario -> [Publicacion]
 sumaSiUDioLike l u | l == [] = []
-                   | uDioLike u (head l) && not (pertenece (head l) (tail l)) = head l :  sumaSiUDioLike (tail l) u
+                   | pertenece u (likesDePublicacion (head l)) && not (pertenece (head l) (tail l)) = head l : sumaSiUDioLike (tail l) u
                    | otherwise = sumaSiUDioLike (tail l) u
-
-
-uDioLike :: Usuario -> Publicacion -> Bool
-uDioLike u p | pertenece u (likesDePublicacion p) = True
-             | otherwise = False
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
