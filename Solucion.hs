@@ -132,23 +132,22 @@ lesGustanLasMismasPublicaciones red u1 u2 | publicacionesQueLeGustanA red u1 == 
                                           | otherwise = False 
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
---9 
--- La funcion devuelve un booleano dependiendo de si todas  las publicaciones de un usuario u existe u2 que le haya puesto like 
-{-
+
+-- 9 
+-- Verifica si en todas las publicaciones de un usuario u existe u2 que le haya puesto like a todas.
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel red u | publicacionesDe red u == []  = False 
-                          | longitud (publicacionesDe red u) == 1 && (likesDePublicacion (head (publicacionesDe red u)) /= []) = True -- Si hay una sola publi del usuario u y tiene 1 like o mas, es true.
-                          | likesDePublicacion (head (publicacionesDe red u)) == [] = False --Si hay una publi con 0 likes entonces no hay seguidor fiel 
-                          |
-amigosDe :: RedSocial -> Usuario -> [Usuario] cantidadDeApariciones (head (amigosDe red u)) (likesDeTodasLasPublisDeU red u) == longitud (publicacionesDe red u) = True 
-                      --    | otherwise = tieneUnSeguidorFiel ((tail (usuarios red)), relaciones red, publicaciones red) u 
-                        |otherwise = True -- este othw no va, es solo por comodidad. 
-likesDeTodasLasPublisDeU :: RedSocial -> Usuario -> [Usuario]
-likesDeTodasLasPublisDeU red u | publicacionesDe red u == [] = []
-                               | otherwise = likesDePublicacion (head (publicacionesDe red u)) ++ likesDeTodasLasPublisDeU (usuarios red, relaciones red, tail (publicaciones red)) u
--}
+tieneUnSeguidorFiel red u = seguidorFiel (amigosDe red u) (publicacionesDe red u) 
+
+-- Función auxiliar: verifica si hay un seguidor fiel
+seguidorFiel :: [Usuario] -> [Publicacion] -> Bool
+seguidorFiel _ [] = False
+seguidorFiel [] _ = False  
+seguidorFiel (u:us) (pub:pubs) | longitud (pub:pubs) == 1 && pertenece u (likesDePublicacion pub) = True
+                               | pertenece u (likesDePublicacion pub) = seguidorFiel (u:us) pubs
+                               | otherwise = seguidorFiel us (pub:pubs)
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 -- 10
 -- Verifica si existe una cadena de amigos en comun posible entre un usuario y otro en la red.
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
@@ -160,7 +159,6 @@ u1AlPrincipiou2AlFinal :: [Usuario] -> Usuario -> Usuario -> [Usuario] -- Testea
 u1AlPrincipiou2AlFinal us u1 u2 = u1 : (quitarTodos u1 (quitarTodos u2 us)) ++ [u2]  
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 -- # Funciones auxiliares # --
 
