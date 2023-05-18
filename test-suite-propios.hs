@@ -18,9 +18,9 @@ tests = test [
 
     " publicacionesQueLeGustanA 1" ~: (testSuiteEj7),
 
-    " lesGustanLasMismasPublicaciones 2" ~: (testSuiteEj8)
+    " lesGustanLasMismasPublicaciones 2" ~: (testSuiteEj8),
 
-   -- " tieneUnSeguidorFiel 1" ~: (tieneUnSeguidorFiel redF usuario1) ~?= True,
+    " tieneUnSeguidorFiel 1" ~: (testSuiteEj9)
 
    -- " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redF usuario1 usuario3) ~?= True -}
     ]
@@ -82,19 +82,21 @@ testSuiteEj8 = test [
    -- "Caso 3: Ambos usuarios les gusta las mismas publicaciones"
     ]
 
-{-
+
 testSuiteEj9 = test [
      "Caso 1: Usuario sin publicaciones" ~: tieneUnSeguidorFiel redC usuario4 ~?= False, 
      "Caso 1: Usuario sin likes en sus publicaciones" ~: tieneUnSeguidorFiel redG usuario1 ~?= False,
      "Caso 3: Usuario con publicaciones sin seguidor fiel" ~: tieneUnSeguidorFiel redF usuario3 ~?= False,
      "Caso 4: Usuario con seguidor fiel" ~: tieneUnSeguidorFiel redF usuario2 ~?= True
     ]
--}
 
+{-
 testSuiteEj10 = test [
-     "Caso 1: Usuario 1 y usuario 2 son amigos" ~: existeSecuenciaDeAmigos   ~?= True
-     "Caso 2: Existe posible cadena de amigos entre usuario 1 y usuario 2" ~: existeSecuenciaDeAmigos   ~?= True
+     "Caso 1: Usuario 1 y usuario 2 son amigos" ~: existeSecuenciaDeAmigos   ~?= True,
+     "Caso 2: Existe posible cadena de amigos entre usuario 1 y usuario 2" ~: existeSecuenciaDeAmigos   ~?= True,
      "Caso 3: No existe posible cadena de amigos entre usuario 1 y usuario 2" ~: existeSecuenciaDeAmigos  ~?= False
+    ]
+-}
 
 usuariosV = []
 relacionesV = []
