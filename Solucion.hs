@@ -97,9 +97,9 @@ publicacionesDe red u = sumaPublisDistintas (publicaciones red) u
 
 sumaPublisDistintas :: [Publicacion] -> Usuario -> [Publicacion]
 sumaPublisDistintas [] u = []
-sumaPublisDistintas (x:xs) u = if  (laPublicacionEsDeU x u && not(pertenece x xs))
-                                            then x : sumaPublisDistintas xs u   
-                                                 else sumaPublisDistintas xs u
+sumaPublisDistintas (pub:pubs) u = if  usuarioDePublicacion pub == u && not(pertenece pub pubs)
+                                            then pub : sumaPublisDistintas pubs u   
+                                                 else sumaPublisDistintas pubs u
 
 laPublicacionEsDeU :: Publicacion -> Usuario -> Bool
 laPublicacionEsDeU (u1,str,l) u | u1 == u = True
@@ -150,12 +150,13 @@ seguidorFiel (u:us) (pub:pubs) | longitud (pub:pubs) == 1 && pertenece u (likesD
 -- 10
 -- Verifica si existe una cadena de amigos en comun posible entre un usuario y otro en la red.
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos red u1 u2 | longitud (usuarios red) == 2 && pertenece (head (usuarios red)) (amigosDe red (head(tail (usuarios red)))) = True  
-existeSecuenciaDeAmigos red u1 u2 | pertenece (head (u1AlPrincipiou2AlFinal (usuarios red) u1 u2)) (amigosDe red (head (tail (u1AlPrincipiou2AlFinal (usuarios red) u1 u2)))) == True = existeSecuenciaDeAmigos ((tail (u1AlPrincipiou2AlFinal (usuarios red) u1 u2)), relaciones red, publicaciones red) u1 u2 
-                                  | otherwise = False
+existeSecuenciaDeAmigos red u1 u2 = pertenece u2 (amigosDe red u1 ++ listaDeAmigos red (amigosDe red u1))
 
-u1AlPrincipiou2AlFinal :: [Usuario] -> Usuario -> Usuario -> [Usuario] -- Testeado, el problema esta en el codigo exsecuenamigos
-u1AlPrincipiou2AlFinal us u1 u2 = u1 : (quitarTodos u1 (quitarTodos u2 us)) ++ [u2]  
+-- Devuelve una lista donde concatena recursivamente a los amigos de los amigos del usuario.
+listaDeAmigos :: RedSocial -> [Usuario] -> [Usuario]
+listaDeAmigos _ [] = []
+listaDeAmigos red (u:us) | amigosDe red u == [] = listaDeAmigos red us
+                         | otherwise = amigosDe red u ++ listaDeAmigos red us
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -188,4 +189,3 @@ eliminarRepetidos :: (Eq t) => [t] -> [t]
 eliminarRepetidos [] = []
 eliminarRepetidos (x:xs) | pertenece x xs = [x] ++ quitarTodos x xs
                          | otherwise = [x] ++ eliminarRepetidos xs
-
