@@ -45,7 +45,8 @@ nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios red | usuarios red == [] = [] 
                       | longitud (usuarios red) == 1 = [nombreDeUsuario (head (usuarios red))]
                       | otherwise = eliminarRepetidos (proyectarNombres red)
-                        
+
+-- Devuelve una lista con todos los nombres de usuario de la red.
 proyectarNombres ::  RedSocial -> [String]
 proyectarNombres red | usuarios red == [] = []
                      | otherwise = [nombreDeUsuario (head (usuarios red))] ++ proyectarNombres (tail (usuarios red), relaciones red, publicaciones red)
@@ -95,6 +96,7 @@ estaRobertoCarlos red | pertenece (usuarioConMasAmigos red) (usuarios red) && ca
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
 publicacionesDe red u = sumaPublisDistintas (publicaciones red) u 
 
+-- Devuelve una lista que contiene a las publicaciones de un usuario sin repetirse.
 sumaPublisDistintas :: [Publicacion] -> Usuario -> [Publicacion]
 sumaPublisDistintas [] u = []
 sumaPublisDistintas (pub:pubs) u | (usuarioDePublicacion pub == u && not(pertenece pub pubs)) == True = pub : sumaPublisDistintas pubs u   
@@ -128,6 +130,7 @@ lesGustanLasMismasPublicaciones red u1 u2 | publicacionesQueLeGustanA red u1 == 
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
 tieneUnSeguidorFiel red u = seguidorFiel (amigosDe red u) (publicacionesDe red u) 
 
+-- Verifica si en una lista de publicaciones existe algun usuario de una lista de usuarios que le haya dado like a todas.
 seguidorFiel :: [Usuario] -> [Publicacion] -> Bool
 seguidorFiel _ [] = False
 seguidorFiel [] _ = False  
@@ -168,6 +171,7 @@ cantidadDeApariciones :: (Eq t) => t -> [t] -> Int
 cantidadDeApariciones _ [] = 0
 cantidadDeApariciones e (x:xs) | e == x = 1 + cantidadDeApariciones e xs
                                | e /= x = cantidadDeApariciones e xs
+                               
 -- Devuelve la lista ingresada sin el elemento ingresado. 
 quitarTodos :: (Eq t) => t -> [t] -> [t]
 quitarTodos x xs | xs == [] = []
