@@ -45,7 +45,8 @@ nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios red | usuarios red == [] = [] 
                       | longitud (usuarios red) == 1 = [nombreDeUsuario (head (usuarios red))]
                       | otherwise = eliminarRepetidos (proyectarNombres red)
-                        
+
+-- Devuelve la lista con los nombres de los usuarios de la red.                        
 proyectarNombres ::  RedSocial -> [String]
 proyectarNombres red | usuarios red == [] = []
                      | otherwise = [nombreDeUsuario (head (usuarios red))] ++ proyectarNombres (tail (usuarios red), relaciones red, publicaciones red)
@@ -55,14 +56,14 @@ proyectarNombres red | usuarios red == [] = []
 --2
 -- Devuelve los usuarios relacionados con el usuario ingresado.
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe red u  = sumaDistintos u (relaciones red)  
+amigosDe red u  = concatUsuariosDistintos u (relaciones red)  
 
 -- Concatena los usuarios que no esten repetidos.
-sumarUsuariosDistintos :: Usuario -> [Relacion] -> [Usuario]
-sumarUsuariosDistintos u [] = []
-sumarUsuariosDistintos u ((u1,u2):rels) | u == u1 && not(pertenece (u1, u2) rels) = [u2] ++ sumarUsuariosDistintos u rels
-                                        | u == u2 && not(pertenece (u1, u2) rels) = [u1] ++ sumarUsuariosDistintos u rels
-                                        | otherwise = sumarUsuariosDistintos u rels
+concatUsuariosDistintos :: Usuario -> [Relacion] -> [Usuario]
+concatUsuariosDistintos _ [] = []
+concatUsuariosDistintos u ((u1,u2):rels) | u == u1 && not(pertenece (u1, u2) rels) = [u2] ++ concatUsuariosDistintos u rels
+                                         | u == u2 && not(pertenece (u1, u2) rels) = [u1] ++ concatUsuariosDistintos u rels
+                                         | otherwise = concatUsuariosDistintos u rels
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +78,7 @@ cantidadDeAmigos red u = longitud (amigosDe red u)
 -- Devuelve cual es el usuario con mas amigos de la red.
 usuarioConMasAmigos :: RedSocial -> Usuario
 usuarioConMasAmigos red | longitud (usuarios red) == 1 = head (usuarios red)
-                        | cantidadDeAmigos red (head (usuarios red)) >= cantidadDeAmigos red (head (tail (usuarios red))) = usuarioConMasAmigos ((head (usuarios red): tail (tail (usuarios red))), relaciones red, publicaciones red)
+                        | cantidadDeAmigos red (head (usuarios red)) >= cantidadDeAmigos red (head (tail (usuarios red))) = usuarioConMasAmigos ((head (usuarios red) : tail (tail (usuarios red))), relaciones red, publicaciones red)
                         | otherwise = usuarioConMasAmigos (tail (usuarios red), relaciones red, publicaciones red)
                
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,26 +98,20 @@ publicacionesDe red u = sumaPublisDistintas (publicaciones red) u
 
 sumaPublisDistintas :: [Publicacion] -> Usuario -> [Publicacion]
 sumaPublisDistintas [] u = []
-sumaPublisDistintas (pub:pubs) u = if  usuarioDePublicacion pub == u && not(pertenece pub pubs)
-                                            then pub : sumaPublisDistintas pubs u   
-                                                 else sumaPublisDistintas pubs u
-
-laPublicacionEsDeU :: Publicacion -> Usuario -> Bool
-laPublicacionEsDeU (u1,str,l) u | u1 == u = True
-                                | otherwise = False
+sumaPublisDistintas (pub:pubs) u = if usuarioDePublicacion pub == u && not(pertenece pub pubs) then pub : sumaPublisDistintas pubs u else sumaPublisDistintas pubs u
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --7
 -- Devuelve la lista de publicaciones que le gustan a un usuario de la red.
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA red u = sumaSiUDioLike (publicaciones red) u
+publicacionesQueLeGustanA red u = sumaSiUsuarioDioLike (publicaciones red) u
 
--- Devuelve una lista de publicaciones a las que un 
-sumaSiUDioLike :: [Publicacion] -> Usuario -> [Publicacion]
-sumaSiUDioLike l u | l == [] = []
-                   | pertenece u (likesDePublicacion (head l)) && not (pertenece (head l) (tail l)) = head l : sumaSiUDioLike (tail l) u
-                   | otherwise = sumaSiUDioLike (tail l) u
+-- Devuelve una lista de publicaciones a las que un usuario dio like.
+sumaSiUsuarioDioLike :: [Publicacion] -> Usuario -> [Publicacion]
+sumaSiUsuarioDioLike (pub : pubs) u | (pub : pubs) == [] = []
+                                    | pertenece u (likesDePublicacion pub) && not (pertenece pub pubs) = pub : sumaSiUsuarioDioLike pubs u
+                                    | otherwise = sumaSiUsuarioDioLike pubs u
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -133,6 +128,7 @@ lesGustanLasMismasPublicaciones red u1 u2 | publicacionesQueLeGustanA red u1 == 
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
 tieneUnSeguidorFiel red u = seguidorFiel (amigosDe red u) (publicacionesDe red u) 
 
+-- Verifica si existe un seguidor fiel en los amigos de un usuario.
 seguidorFiel :: [Usuario] -> [Publicacion] -> Bool
 seguidorFiel _ [] = False
 seguidorFiel [] _ = False  
@@ -173,6 +169,7 @@ cantidadDeApariciones :: (Eq t) => t -> [t] -> Int
 cantidadDeApariciones _ [] = 0
 cantidadDeApariciones e (x:xs) | e == x = 1 + cantidadDeApariciones e xs
                                | e /= x = cantidadDeApariciones e xs
+
 -- Devuelve la lista ingresada sin el elemento ingresado. 
 quitarTodos :: (Eq t) => t -> [t] -> [t]
 quitarTodos x xs | xs == [] = []
