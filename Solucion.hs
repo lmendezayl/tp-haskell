@@ -109,9 +109,9 @@ publicacionesQueLeGustanA red u = sumaSiUsuarioDioLike (publicaciones red) u
 
 -- Devuelve una lista de publicaciones a las que un usuario dio like.
 sumaSiUsuarioDioLike :: [Publicacion] -> Usuario -> [Publicacion]
-sumaSiUsuarioDioLike (pub : pubs) u | (pub : pubs) == [] = []
-                                    | pertenece u (likesDePublicacion pub) && not (pertenece pub pubs) = pub : sumaSiUsuarioDioLike pubs u
-                                    | otherwise = sumaSiUsuarioDioLike pubs u
+sumaSiUsuarioDioLike (pub:pubs) u | (pub:pubs) == [] = []
+                                  | pertenece u (likesDePublicacion pub) && not (pertenece pub pubs) = pub : sumaSiUsuarioDioLike pubs u
+                                  | otherwise = sumaSiUsuarioDioLike pubs u
 
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
